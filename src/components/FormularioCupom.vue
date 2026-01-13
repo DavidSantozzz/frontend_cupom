@@ -32,74 +32,32 @@
       <div class="inputs-row">
         <div class="input-box">
           <label>Nome da recepcionista</label>
-          <input
-            type="text"
-            v-model.trim="recepcionista"
-            placeholder="Ex: Maria Silva"
-            required
-          />
+          <input type="text" v-model.trim="recepcionista" placeholder="Ex: Maria Silva" required />
         </div>
 
         <div class="input-box">
           <label>Nome do paciente</label>
-          <input
-            type="text"
-            v-model.trim="paciente"
-            placeholder="Ex: João Pereira"
-            required
-          />
+          <input type="text" v-model.trim="paciente" placeholder="Ex: João Pereira" required />
         </div>
       </div>
 
       <div class="inputs-row">
         <div class="input-box full">
           <label>Email do paciente</label>
-          <input
-            type="email"
-            v-model.trim="email"
-            placeholder="Ex: joao@email.com"
-            required
-          />
+          <input type="email" v-model.trim="email" placeholder="Ex: joao@email.com" required />
           <small class="hint">O QRCode será exibido na tela após gerar.</small>
         </div>
       </div>
 
       <div class="actions-row">
         <button type="submit" class="btn-gerar" :disabled="loading">
-          {{ loading ? "Gerando..." : "Gerar desconto" }}
+          {{ loading ? 'Gerando...' : 'Gerar desconto' }}
         </button>
 
         <p v-if="erro" class="msg error">{{ erro }}</p>
         <p v-if="sucesso" class="msg success">{{ sucesso }}</p>
       </div>
     </form>
-
-    <!-- RESULTADO -->
-    <div v-if="cupomGerado" class="result-card">
-      <div class="result-header">
-        <h3 class="result-title">Cupom gerado com sucesso</h3>
-        <p class="result-sub">
-          ID: <span class="mono">{{ cupomGerado.id }}</span> •
-          Expira em: <span class="mono">{{ formatarData(cupomGerado.expires_at) }}</span>
-        </p>
-      </div>
-
-      <div class="qr-wrap">
-        <img :src="cupomGerado.qrBase64" alt="QRCode do Cupom" />
-      </div>
-
-      <div class="result-actions">
-        <button type="button" class="btn-secondary" @click="copiarToken">
-          Copiar token
-        </button>
-        <button type="button" class="btn-secondary" @click="copiarId">
-          Copiar ID
-        </button>
-        <button type="button" class="btn-secondary" @click="limparResultado">
-          Limpar
-        </button>
-      </div>
-    </div>
 
     <!-- LISTAGEM -->
     <div class="list-card">
@@ -116,8 +74,13 @@
             v-model.trim="buscaCupom"
             placeholder="Buscar por paciente, recepcionista, procedimento, email..."
           />
-          <button type="button" class="btn-secondary" @click="carregarCupons" :disabled="loadingCupons">
-            {{ loadingCupons ? "Atualizando..." : "Atualizar lista" }}
+          <button
+            type="button"
+            class="btn-secondary"
+            @click="carregarCupons"
+            :disabled="loadingCupons"
+          >
+            {{ loadingCupons ? 'Atualizando...' : 'Atualizar lista' }}
           </button>
         </div>
       </div>
@@ -126,7 +89,7 @@
         <table>
           <thead>
             <tr>
-              <th style="width: 90px;">ID</th>
+              <th style="width: 90px">ID</th>
               <th>Status</th>
 
               <!-- Dados do cupom -->
@@ -145,7 +108,7 @@
               <!-- Campos "grandes" -->
               <th>Token</th>
               <th>QRCode</th>
-              <th style="width: 220px;">Ações</th>
+              <th style="width: 220px">Ações</th>
             </tr>
           </thead>
 
@@ -163,16 +126,18 @@
                 </span>
               </td>
 
-              <td>{{ c.nome_paciente ?? c.paciente_nome ?? "-" }}</td>
-              <td class="mono">{{ c.email_paciente ?? c.paciente_email ?? "-" }}</td>
-              <td>{{ c.recepcionista ?? "-" }}</td>
+              <td>{{ c.nome_paciente ?? c.paciente_nome ?? '-' }}</td>
+              <td class="mono">{{ c.email_paciente ?? c.paciente_email ?? '-' }}</td>
+              <td>{{ c.recepcionista ?? '-' }}</td>
 
               <td class="mono">{{ Number(c.desconto ?? 0) }}%</td>
               <td class="mono">{{ formatarData(c.expires_at) }}</td>
               <td class="mono">{{ formatarData(c.created_at) }}</td>
 
-              <td>{{ c.procedimento?.nome ?? c.procedimento_nome ?? "-" }}</td>
-              <td class="mono">{{ formatarMoeda(c.valor ?? c.procedimento?.preco ?? c.procedimento_preco) }}</td>
+              <td>{{ c.procedimento?.nome ?? c.procedimento_nome ?? '-' }}</td>
+              <td class="mono">
+                {{ formatarMoeda(c.valor ?? c.procedimento?.preco ?? c.procedimento_preco) }}
+              </td>
               <td class="mono">{{ formatarMoeda(c.valor_descontado ?? calcularDescontado(c)) }}</td>
 
               <!-- Token -->
@@ -188,14 +153,18 @@
 
               <td>
                 <div class="actions">
-                  <button type="button" class="btn btn-mini" @click="copiarValor(c.token, 'Token copiado!')" :disabled="!c.token">
+                  <button
+                    type="button"
+                    class="btn btn-mini"
+                    @click="copiarValor(c.token, 'Token copiado!')"
+                    :disabled="!c.token"
+                  >
                     Copiar token
                   </button>
 
-<button type="button" class="btn btn-mini danger" @click="excluirCupom(c.id)">
-  Excluir
-</button>
-
+                  <button type="button" class="btn btn-mini danger" @click="excluirCupom(c.id)">
+                    Excluir
+                  </button>
 
                   <button
                     type="button"
@@ -226,7 +195,10 @@
         <div class="modal-body">
           <img :src="qrSelecionadoImg" alt="QRCode" />
           <div class="modal-actions">
-            <button class="btn-secondary" @click="copiarValor(qrSelecionadoImg, 'Base64 do QR copiado!')">
+            <button
+              class="btn-secondary"
+              @click="copiarValor(qrSelecionadoImg, 'Base64 do QR copiado!')"
+            >
               Copiar base64
             </button>
           </div>
@@ -237,61 +209,61 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue"
-import axios from "axios"
+import { ref, onMounted, computed } from 'vue'
+import axios from 'axios'
 
 const api = axios.create({
-  baseURL: "http://localhost:5000",
-  headers: { "Content-Type": "application/json" },
+  baseURL: 'http://localhost:5000',
+  headers: { 'Content-Type': 'application/json' },
 })
 
 /** ⚠️ IMPORTANTE: para celular, troque para seu IP */
-const scanBaseUrl = "http://192.168.0.10:5000"
+const scanBaseUrl = 'http://192.168.0.10:5000'
 
 const procedimentos = ref([])
-const procedimentoId = ref("")
+const procedimentoId = ref('')
 const desconto = ref(0)
-const recepcionista = ref("")
-const paciente = ref("")
-const email = ref("")
+const recepcionista = ref('')
+const paciente = ref('')
+const email = ref('')
 
 const loading = ref(false)
-const erro = ref("")
-const sucesso = ref("")
+const erro = ref('')
+const sucesso = ref('')
 
 const cupomGerado = ref(null)
 
 // LISTAGEM
 const cupons = ref([])
 const loadingCupons = ref(false)
-const erroCupons = ref("")
-const buscaCupom = ref("")
+const erroCupons = ref('')
+const buscaCupom = ref('')
 
 // MODAL QR
 const qrModalAberto = ref(false)
 const qrSelecionado = ref(null)
 
 const qrSelecionadoImg = computed(() => {
-  if (!qrSelecionado.value) return ""
-  return qrSelecionado.value.qrcode_base64 || qrSelecionado.value.qrBase64 || ""
+  if (!qrSelecionado.value) return ''
+  return qrSelecionado.value.qrcode_base64 || qrSelecionado.value.qrBase64 || ''
 })
 
 function formatarMoeda(valor) {
   const n = Number(valor)
-  if (!Number.isFinite(n)) return "R$ 0,00"
-  return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+  if (!Number.isFinite(n)) return 'R$ 0,00'
+  return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 }
 
 function formatarData(valor) {
-  if (!valor) return "-"
-  const v = String(valor).replace(" ", "T")
+  if (!valor) return '-'
+  const v = String(valor).replace(' ', 'T')
   const d = new Date(v)
   if (!Number.isFinite(d.getTime())) return String(valor)
-  return d.toLocaleString("pt-BR")
+  return d.toLocaleString('pt-BR')
 }
 
 function encurtar(v) {
-  if (!v) return "-"
+  if (!v) return '-'
   const s = String(v)
   if (s.length <= 10) return s
   return `${s.slice(0, 6)}...${s.slice(-4)}`
@@ -306,41 +278,41 @@ function calcularDescontado(c) {
 
 function isExpirado(c) {
   if (!c?.expires_at) return false
-  const v = String(c.expires_at).replace(" ", "T")
+  const v = String(c.expires_at).replace(' ', 'T')
   const exp = new Date(v)
   if (!Number.isFinite(exp.getTime())) return false
   return new Date() > exp
 }
 
 function statusTexto(c) {
-  return isExpirado(c) ? "EXPIRADO" : "ATIVO"
+  return isExpirado(c) ? 'EXPIRADO' : 'ATIVO'
 }
 
 function statusClass(c) {
-  return isExpirado(c) ? "badge-expirado" : "badge-ativo"
+  return isExpirado(c) ? 'badge-expirado' : 'badge-ativo'
 }
 
 async function carregarProcedimentos() {
   try {
-    const { data } = await api.get("/procedimentos")
+    const { data } = await api.get('/procedimentos')
     procedimentos.value = Array.isArray(data) ? data : (data?.rows ?? [])
   } catch (e) {
     console.error(e)
-    erro.value = "Não foi possível carregar procedimentos."
+    erro.value = 'Não foi possível carregar procedimentos.'
   }
 }
 
 async function carregarCupons() {
   try {
-    erroCupons.value = ""
+    erroCupons.value = ''
     loadingCupons.value = true
-    const { data } = await api.get("/cupons")
+    const { data } = await api.get('/cupons')
 
     // Esperado: array
     cupons.value = Array.isArray(data) ? data : (data?.rows ?? [])
   } catch (e) {
     console.error(e)
-    erroCupons.value = "Não foi possível carregar cupons."
+    erroCupons.value = 'Não foi possível carregar cupons.'
   } finally {
     loadingCupons.value = false
   }
@@ -351,11 +323,11 @@ const cuponsFiltrados = computed(() => {
   if (!q) return cupons.value
 
   return cupons.value.filter((c) => {
-    const paciente = (c.nome_paciente ?? c.paciente_nome ?? "").toLowerCase()
-    const rec = (c.recepcionista ?? "").toLowerCase()
-    const email = (c.email_paciente ?? c.paciente_email ?? "").toLowerCase()
-    const proc = (c.procedimento?.nome ?? c.procedimento_nome ?? "").toLowerCase()
-    const id = String(c.id ?? "")
+    const paciente = (c.nome_paciente ?? c.paciente_nome ?? '').toLowerCase()
+    const rec = (c.recepcionista ?? '').toLowerCase()
+    const email = (c.email_paciente ?? c.paciente_email ?? '').toLowerCase()
+    const proc = (c.procedimento?.nome ?? c.procedimento_nome ?? '').toLowerCase()
+    const id = String(c.id ?? '')
     return (
       paciente.includes(q) ||
       rec.includes(q) ||
@@ -367,23 +339,24 @@ const cuponsFiltrados = computed(() => {
 })
 
 function validar() {
-  erro.value = ""
-  sucesso.value = ""
+  erro.value = ''
+  sucesso.value = ''
 
-  if (!procedimentoId.value) return (erro.value = "Selecione um procedimento.")
-  if (desconto.value < 0 || desconto.value > 100) return (erro.value = "A porcentagem deve estar entre 0 e 100.")
-  if (!recepcionista.value) return (erro.value = "Informe o nome da recepcionista.")
-  if (!paciente.value) return (erro.value = "Informe o nome do paciente.")
-  if (!email.value) return (erro.value = "Informe o email do paciente.")
+  if (!procedimentoId.value) return (erro.value = 'Selecione um procedimento.')
+  if (desconto.value < 0 || desconto.value > 100)
+    return (erro.value = 'A porcentagem deve estar entre 0 e 100.')
+  if (!recepcionista.value) return (erro.value = 'Informe o nome da recepcionista.')
+  if (!paciente.value) return (erro.value = 'Informe o nome do paciente.')
+  if (!email.value) return (erro.value = 'Informe o email do paciente.')
   return true
 }
 
 function limparForm() {
-  procedimentoId.value = ""
+  procedimentoId.value = ''
   desconto.value = 0
-  recepcionista.value = ""
-  paciente.value = ""
-  email.value = ""
+  recepcionista.value = ''
+  paciente.value = ''
+  email.value = ''
 }
 
 function limparResultado() {
@@ -393,8 +366,8 @@ function limparResultado() {
 async function copiarValor(texto, msg) {
   if (!texto) return
   await navigator.clipboard.writeText(String(texto))
-  sucesso.value = msg || "Copiado!"
-  setTimeout(() => (sucesso.value = ""), 1500)
+  sucesso.value = msg || 'Copiado!'
+  setTimeout(() => (sucesso.value = ''), 1500)
 }
 
 async function excluirCupom(id) {
@@ -403,32 +376,15 @@ async function excluirCupom(id) {
 
   try {
     await api.delete(`/cupons/${id}`)
-    sucesso.value = "Cupom excluído!"
-    setTimeout(() => (sucesso.value = ""), 1500)
+    sucesso.value = 'Cupom excluído!'
+    setTimeout(() => (sucesso.value = ''), 1500)
 
     // remove da lista sem precisar buscar tudo de novo
     cupons.value = cupons.value.filter((c) => c.id !== id)
   } catch (e) {
     console.error(e)
-    erroCupons.value = e?.response?.data?.error || "Não foi possível excluir o cupom."
+    erroCupons.value = e?.response?.data?.error || 'Não foi possível excluir o cupom.'
   }
-}
-
-
-async function copiarToken() {
-  if (!cupomGerado.value?.token) return
-  await copiarValor(cupomGerado.value.token, "Token copiado!")
-}
-
-async function copiarId() {
-  if (!cupomGerado.value?.id) return
-  await copiarValor(String(cupomGerado.value.id), "ID copiado!")
-}
-
-async function copiarUrlScan(c) {
-  if (!c?.id || !c?.token) return
-  const url = `${scanBaseUrl}/cupons/scan?id=${c.id}&token=${encodeURIComponent(c.token)}`
-  await copiarValor(url, "URL scan copiada!")
 }
 
 function abrirQr(c) {
@@ -446,7 +402,6 @@ async function gerarCupom() {
 
   try {
     loading.value = true
-    limparResultado()
 
     const payload = {
       procedimentoId: Number(procedimentoId.value),
@@ -456,26 +411,26 @@ async function gerarCupom() {
       email: email.value,
     }
 
-    const { data } = await api.post("/cupons", payload)
+    const { data } = await api.post('/cupons', payload)
 
-    cupomGerado.value = {
-      id: data?.id ?? data?.insertId,
-      token: data?.token,
-      expires_at: data?.expires_at,
-      qrBase64: data?.qrBase64,
-      urlScan: data?.urlScan,
+    if (data?.ok) {
+      sucesso.value = data?.message || 'Enviado com sucesso!'
+      erro.value = ''
+      limparForm()
+      await carregarCupons()
+    } else {
+      erro.value = data?.message || 'Não pôde ser enviado'
+      sucesso.value = ''
     }
 
-    sucesso.value = "Cupom gerado com sucesso!"
-    setTimeout(() => (sucesso.value = ""), 2500)
-
-    limparForm()
-
-    // ✅ atualiza a lista automaticamente
-    await carregarCupons()
+    setTimeout(() => {
+      sucesso.value = ''
+      erro.value = ''
+    }, 2500)
   } catch (e) {
     console.error(e)
-    erro.value = e?.response?.data?.error || "Não foi possível gerar o cupom."
+    erro.value = e?.response?.data?.error || 'Não pôde ser enviado'
+    sucesso.value = ''
   } finally {
     loading.value = false
   }
@@ -632,7 +587,9 @@ select:focus {
 }
 
 .mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
 }
 
 .small {
@@ -644,7 +601,6 @@ select:focus {
   border-color: rgba(176, 0, 32, 0.25);
   color: #b00020;
 }
-
 
 .qr-wrap {
   display: flex;
@@ -773,7 +729,7 @@ tbody td {
 }
 
 .badge-expirado {
-  background: rgba(176, 0, 32, 0.10);
+  background: rgba(176, 0, 32, 0.1);
   color: #b00020;
   border: 1px solid rgba(176, 0, 32, 0.22);
 }
@@ -822,9 +778,9 @@ tbody td {
   max-width: 520px;
   background: #fff;
   border-radius: 14px;
-  box-shadow: 0 18px 55px rgba(0,0,0,.25);
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.25);
   overflow: hidden;
-  border: 1px solid rgba(0,0,0,.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .modal-header {
@@ -832,7 +788,7 @@ tbody td {
   justify-content: space-between;
   align-items: center;
   padding: 14px 16px;
-  border-bottom: 1px solid rgba(0,0,0,.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .modal-close {
@@ -855,7 +811,7 @@ tbody td {
   height: 320px;
   object-fit: contain;
   border-radius: 12px;
-  border: 1px dashed rgba(0,0,0,.18);
+  border: 1px dashed rgba(0, 0, 0, 0.18);
   padding: 10px;
 }
 
