@@ -153,26 +153,8 @@
 
               <td>
                 <div class="actions">
-                  <button
-                    type="button"
-                    class="btn btn-mini"
-                    @click="copiarValor(c.token, 'Token copiado!')"
-                    :disabled="!c.token"
-                  >
-                    Copiar token
-                  </button>
-
                   <button type="button" class="btn btn-mini danger" @click="excluirCupom(c.id)">
                     Excluir
-                  </button>
-
-                  <button
-                    type="button"
-                    class="btn btn-mini"
-                    @click="abrirQr(c)"
-                    :disabled="!(c.qrcode_base64 || c.qrBase64)"
-                  >
-                    Ver QR
                   </button>
                 </div>
               </td>
@@ -374,11 +356,6 @@ async function excluirCupom(id) {
     console.error(e)
     erroCupons.value = e?.response?.data?.error || 'Não foi possível excluir o cupom.'
   }
-}
-
-function abrirQr(c) {
-  qrSelecionado.value = c
-  qrModalAberto.value = true
 }
 
 function fecharQr() {
