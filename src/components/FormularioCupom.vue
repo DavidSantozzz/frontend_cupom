@@ -319,22 +319,15 @@ async function carregarCupons() {
 }
 
 const cuponsFiltrados = computed(() => {
-  const q = buscaCupom.value?.toLowerCase().trim()
+  const q = (buscaCupom.value || '').toLowerCase().trim()
   if (!q) return cupons.value
 
   return cupons.value.filter((c) => {
-    const paciente = (c.nome_paciente ?? c.paciente_nome ?? '').toLowerCase()
-    const rec = (c.recepcionista ?? '').toLowerCase()
-    const email = (c.email_paciente ?? c.paciente_email ?? '').toLowerCase()
-    const proc = (c.procedimento?.nome ?? c.procedimento_nome ?? '').toLowerCase()
-    const id = String(c.id ?? '')
-    return (
-      paciente.includes(q) ||
-      rec.includes(q) ||
-      email.includes(q) ||
-      proc.includes(q) ||
-      id.includes(q)
-    )
+    const paciente = String(c.nome_paciente ?? c.paciente_nome ?? '').toLowerCase()
+
+    const procedimento = String(c.procedimento_nome ?? c.procedimento?.nome ?? '').toLowerCase()
+
+    return paciente.includes(q) || procedimento.includes(q)
   })
 })
 
@@ -357,10 +350,6 @@ function limparForm() {
   recepcionista.value = ''
   paciente.value = ''
   email.value = ''
-}
-
-function limparResultado() {
-  cupomGerado.value = null
 }
 
 async function copiarValor(texto, msg) {
