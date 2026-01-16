@@ -199,9 +199,6 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 })
 
-/** ⚠️ IMPORTANTE: para celular, troque para seu IP */
-const scanBaseUrl = 'http://192.168.0.10:5000'
-
 const procedimentos = ref([])
 const procedimentoId = ref('')
 const desconto = ref(0)
@@ -258,20 +255,25 @@ function calcularDescontado(c) {
   return Number((preco * (1 - desc / 100)).toFixed(2))
 }
 
+function statusTexto(c) {
+  const s = String(c?.statusbar ?? c?.status ?? '').toUpperCase()
+  if (s) return s
+  return isExpirado(c) ? 'USADO' : 'ATIVO'
+}
+
+function statusClass(c) {
+  const st = statusTexto(c)
+  if (st === 'USADO') return 'badge-usado'
+  if (st === 'CANCELADO') return 'badge-cancelado'
+  return 'badge-ativo'
+}
+
 function isExpirado(c) {
   if (!c?.expires_at) return false
   const v = String(c.expires_at).replace(' ', 'T')
   const exp = new Date(v)
   if (!Number.isFinite(exp.getTime())) return false
   return new Date() > exp
-}
-
-function statusTexto(c) {
-  return isExpirado(c) ? 'EXPIRADO' : 'ATIVO'
-}
-
-function statusClass(c) {
-  return isExpirado(c) ? 'badge-expirado' : 'badge-ativo'
 }
 
 async function carregarProcedimentos() {
@@ -292,6 +294,7 @@ async function carregarCupons() {
 
     // Esperado: array
     cupons.value = Array.isArray(data) ? data : (data?.rows ?? [])
+    console.log('CUPOM 0:', Array.isArray(data) ? data[0] : data?.rows?.[0])
   } catch (e) {
     console.error(e)
     erroCupons.value = 'Não foi possível carregar cupons.'
@@ -694,10 +697,10 @@ tbody td {
   border: 1px solid rgba(10, 122, 47, 0.22);
 }
 
-.badge-expirado {
-  background: rgba(176, 0, 32, 0.1);
-  color: #b00020;
-  border: 1px solid rgba(176, 0, 32, 0.22);
+.badge-usado {
+  background: rgba(176, 158, 0, 0.1);
+  color: #f0d353;
+  border: 1px solid rgba(235, 197, 31, 0.342);
 }
 
 .actions {
